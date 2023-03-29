@@ -1,6 +1,7 @@
 CREATE DATABASE  IF NOT EXISTS `actividades`;
 USE `actividades`;
 SET SQL_SAFE_UPDATES = 0;
+SET sql_mode  = '';
 
 
 DROP TABLE IF EXISTS `fabricantes`;
@@ -23,21 +24,16 @@ CREATE TABLE `articulos` (
   CONSTRAINT `articulos_ibfk_1` FOREIGN KEY (`FABRICANTE`) REFERENCES `fabricantes` (`CODIGO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-update articulos set precio = precio * 0.10;
-##select precio * 0.10 from articulos;
+update articulos set precio = precio * 0.9;
 update articulos set precio = precio * 0.10 where price >=120;
-##select precio - 10 from articulos where price >= 120;
+update articulos set precio =  precio -10 where precio >= 120;
 insert into articulos values (11, "Altavoces",70,2);
 INSERT INTO `articulos` VALUES (1,'Hard drive',240,5),(2,'Memory',120,6),(3,'ZIP drive',150,4),(4,'Floppy disk',5,6),(5,'Monitor',240,1),(6,'DVD drive',180,2),(7,'CD drive',90,2),(8,'Printer',270,3),(9,'Toner cartridge',66,3),(10,'DVD burner',180,2);
 select nombre from articulos;
 update articulos set nombre= "Impresora Laser" where codigo = 8;
-##Acabar##
-select avg(precio), fabricante from articulos where fabricante in (select nombre from fabricantes);
-####
-select nombre from fabricantes where nombre in (select fabricante from articulos);
-####Acabar###
-select nombre, MIN(precio) from articulos where codigo group by precio;
-###
+select avg(precio) from articulos where fabricante in (select nombre from fabricantes);
+select nombre from fabricantes where codigo in (select fabricante from articulos);
+select nombre,precio from articulos where precio = (select min(precio));
 select nombre, precio from articulos;
 select nombre from articulos where precio - 200;
 select codigo, nombre, precio, fabricante from articulos where precio between 60 and 120;
@@ -72,14 +68,12 @@ select avg(valor) from cajas group by almacen;
 select codigo from almacenes where codigo in (select avg(valor) from cajas)>150;
 select numreferencia from cajas where almacen in (select lugar from almacenes);
 select count(NUMREFERENCIA) from cajas where almacen in (select codigo from almacenes);
-###Por hacer###
-select codigo from almacenes where almacen in (select count(numreferencia)  from cajas) ;
+select codigo from almacenes where codigo > (select count(numreferencia)  from cajas) ;
 select numreferencia from cajas where almacen in (select lugar from almacenes) = "Bilbao";
 insert into almacenes values (6,"Barcelona",3);
 insert into cajas values ("NAKS","Papel",200,2);
-update cajas set valor = valor - 0.5;
-##Por hacer###
-update cajas set valor = valor - 0.20 where valor > avg(valor);
+update cajas set valor = valor * 0.5;
+update cajas set valor = valor * 0.20 where valor > avg(valor);
 delete  from cajas where valor < 100;
 ###Por hacer###
 delete from almacenes where codigo in (select contenido from cajas);
@@ -156,12 +150,11 @@ INSERT INTO `peliculas` VALUES (1,'Citizen Kane','PG'),(2,'Singin\' in the Rain'
 select nombre from peliculas;
 select calificacionedad from peliculas;
 select nombre from peliculas where calificacionedad = null;
-##select nombre from salas where pelicula in (select )
-##select * from salas;
+select nombre from salas where pelicula in (select pelicula from peliculas)= null;
+select codigo,nombre,pelicula from salas where pelicula in (select codigo from peliculas);
 select nombre from peliculas where codigo in (select pelicula from salas)=0;
 insert into peliculas values (10,'Uno,Dos,Tres',7);
-##Por acabar###
-DELETE FROM salas WHERE PELICULA IN (select CALIFICACIONEDAD from peliculas) ='G';
+DELETE FROM salas WHERE pelicula IN (select CALIFICACIONEDAD from peliculas) ="G";
 DROP TABLE IF EXISTS `salas`;
 CREATE TABLE `salas` (
   `CODIGO` int NOT NULL,
